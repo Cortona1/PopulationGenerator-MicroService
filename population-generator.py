@@ -25,7 +25,7 @@ class Gui:
         self.frame.grid()
         self.selected_year = None
         self.selected_state = "Toot"
-        self.row_counter = 12
+        self.row_counter = 13
 
 
     def display_headers(self):
@@ -82,8 +82,19 @@ class Gui:
 
         submit_button = Button(user_interface, text="Click here to submit state and year query",
                                command=self.submit_search)
-        submit_button.grid(row=10, column=0)
 
+        submit_button_output = Button(user_interface, text="Click here to submit state and year query and output results"
+                                                           "to a csv file named output.csv",
+                               command=self.submit_search)
+
+        submit_button.grid(row=10, column=0)
+        submit_button_output.grid(row=11, column=0)
+
+
+
+    def output_file(self):
+        """"""
+        var = 10
 
     def submit_search(self):
         """Function triggered when user submits a query for state and year"""
@@ -114,7 +125,7 @@ class Gui:
 
         #test = str(self.selected_year.get())
         data = ("The population for your selected state of " + str(self.selected_state.get()) + " for the year " +
-              self.selected_year.get(), " is " + population_data)
+              self.selected_year.get() + " is " + population_data)
 
 
         self.output_information(data)
@@ -124,7 +135,7 @@ class Gui:
         """Takes as a parameter data string and outputs that to the gui as a message box"""
         display_pop = Label(user_interface, text=data)
 
-        display_pop.grid(row=self.row_counter, column=0)
+        display_pop.grid(row=self.row_counter, column=0, padx=10, pady=10)
         self.row_counter+=1
 
 """
