@@ -5,10 +5,9 @@
 
 
 
-
-
-
 from tkinter import *
+
+import requests
 
 user_interface = Tk()                # create new Tk object for the user interface
 
@@ -26,6 +25,7 @@ class Gui:
         self.frame.grid()
         self.selected_year = None
         self.selected_state = "Toot"
+        self.row_counter = 12
 
 
     def display_headers(self):
@@ -90,6 +90,43 @@ class Gui:
 
         print("You selected the state", self.selected_state.get(), "and the year", self.selected_year.get())
 
+        self.test_api_call()
+
+    def test_api_call(self):
+        """This function is for testing api call"""
+
+        api_url = "https://api.census.gov/data/" + self.selected_year.get() \
+                  + "/acs/acs1?get=NAME,B01001_001E&for=state:*"
+
+        response = requests.get(api_url)
+
+
+
+        response.json()
+        pop_data = response.json()
+        # print(response.json())
+        population_data= None
+
+        for index in range(1, 53):
+            if pop_data[index][0] == self.selected_state.get():
+                population_data = pop_data[index][1]
+                break
+
+        #test = str(self.selected_year.get())
+        data = ("The population for your selected state of " + str(self.selected_state.get()) + " for the year " +
+              self.selected_year.get(), " is " + population_data)
+
+
+        self.output_information(data)
+
+
+    def output_information(self, data):
+        """Takes as a parameter data string and outputs that to the gui as a message box"""
+        display_pop = Label(user_interface, text=data)
+
+        display_pop.grid(row=self.row_counter, column=0)
+        self.row_counter+=1
+
 """
 
 display_header = Label(user_interface,text="CS-361 Population Generator Microservice ")
@@ -144,6 +181,7 @@ test_run = Gui(user_interface)
 test_run.display_headers()
 test_run.display_options()
 test_run.create_submit()
+#test_run.test_api_call()
 user_interface.mainloop()
 
 
