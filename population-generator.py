@@ -16,7 +16,7 @@ for line in f:
     file_list.append(line.rstrip())        # add each line entry to the file list
 f.close()
 
-print(file_list)
+#print(file_list) for debugging purposes
 
 
 if file_list[0] != 'input_year,input_state':
@@ -192,7 +192,19 @@ if file_list[0] == 'input_year,input_state':
             pop_results = pop_search(list_years[x], list_states[x])
             population_date.append(pop_results)
 
-        print(population_date)
+
+        with open("output.csv", "w") as file:
+            file.write("input_year,input_state,output_population_size\n")
+            for data in range(len(population_date)):
+                file.write(str(list_years[data]))
+                file.write(',"')
+                file.write(list_states[data])
+                file.write('",')
+                file.write(str(population_date[data]))
+                file.write("\n")
+
+
+        #print(population_date)
 
     print("There was a input file specified at runtime")
     print("The contents of the input file are the following:", file_list)
