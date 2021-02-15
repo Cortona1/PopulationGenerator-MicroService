@@ -23,11 +23,11 @@ if file_list[0] != 'input_year,input_state':
 
     from tkinter import *
     import requests as req
-
+    from tkinter import ttk
     user_interface = Tk()                # create new Tk object for the user interface
 
-    user_interface.geometry("1000x800")   # set default window size of interface to 1000 width by 600 height
-    user_interface.resizable(width=False, height=False)     # lock window ratio
+    user_interface.geometry("1300x800")   # set default window size of interface to 1000 width by 600 height
+    #user_interface.resizable(width=False, height=False)     # lock window ratio
     user_interface.configure(background='#FFFFC1')
 
 
@@ -40,7 +40,7 @@ if file_list[0] != 'input_year,input_state':
             self.frame.grid()
             self.selected_year = None
             self.selected_state = "Toot"
-            self.row_counter = 13
+            self.row_counter = 12
 
         def display_headers(self):
             """Will display the headers of the gui"""
@@ -51,9 +51,14 @@ if file_list[0] != 'input_year,input_state':
                                  text="Please select your state of choice from the drop down menu below\nthen "
                                       "choose a corresponding year from the year drop down menu ")
 
-            display_header.grid(row=0, column=4)
+            display_results = Label(user_interface,text="Your results for the search will be shown below:")
+
+            display_header.grid(row=0, column=4, ipady=10)
+            #display_header.place(x=600, y=60, anchor="center")
+
             display_creator.grid(row=1, column=4)
             state_header.grid(row=6, column=0, padx=10, pady=30)
+            display_results.grid(row=6,column=8)
 
         def display_options(self):
             """Will display the options on the gui for selecting state and year"""
@@ -85,7 +90,7 @@ if file_list[0] != 'input_year,input_state':
             state_list = OptionMenu(user_interface, state_variable, *list_var)
             year_list = OptionMenu(user_interface, year_variable, *year_list)
 
-            state_list.grid(row=8, column=0)
+            state_list.grid(row=8, column=0, ipadx=10)
             year_list.grid(row=8, column=1)
 
         def create_submit(self):
@@ -95,15 +100,42 @@ if file_list[0] != 'input_year,input_state':
                                    command=self.submit_search)
 
             submit_button_output = Button(user_interface, text="Click here to submit state and year query and output results"
-                                                               "to a csv file named output.csv",
-                                   command=self.submit_search)
+                                                               " to a csv file named output.csv",
+                                   command=self.submit_search_output)
+            another_sapce = Label(user_interface)
+            space = Label(user_interface)
+            space.grid(row=10, column=0)
+            submit_button.grid(row=11, column=0)
+            another_sapce.grid(row=12,column=0)
+            submit_button_output.grid(row=13, column=0)
 
-            submit_button.grid(row=10, column=0)
-            submit_button_output.grid(row=11, column=0)
+        def output_file(self, population_data):
+            """Receives as a parameter population data from the test api call function and writes to output.csv that
+            information in the recognized format specified in the assignment instructions."""
+            with open("output.csv", "w") as file:
+                file.write("input_year,input_state,output_population_size\n")
 
-        def output_file(self):
-            """"""
-            var = 10
+                file.write(str(self.selected_year.get()))
+                file.write(',"')
+                file.write(str(self.selected_state.get()))
+                file.write('",')
+                file.write(str(population_data))
+                file.write("\n")
+
+
+        def pop_up_message(self):
+            """This function is responsible for showing a pop up message confirming the results of the user's query
+            have been successfully written to output.csv"""
+
+            message = Tk()
+            message.wm_title("Notification!")
+            contents = ttk.Label(message, text="Results have been outputted to output.csv succes"
+                                          "sfully")
+
+            contents.pack(side="top", fill="x", pady=10)
+            x_button = ttk.Button(message, text="Confirm", command=message.destroy)
+            x_button.pack()
+            message.mainloop()
 
         def submit_search(self):
             """Function triggered when user submits a query for state and year"""
@@ -111,6 +143,14 @@ if file_list[0] != 'input_year,input_state':
             print("You selected the state", self.selected_state.get(), "and the year", self.selected_year.get())
 
             self.test_api_call()
+
+        def submit_search_output(self):
+            """Function triggered when user submits a query for state and year"""
+
+            print("You selected the state", self.selected_state.get(), "and the year", self.selected_year.get())
+
+            self.test_api_call()
+            self.pop_up_message()
 
         def test_api_call(self):
             """This function is for testing api call"""
@@ -135,12 +175,13 @@ if file_list[0] != 'input_year,input_state':
                   self.selected_year.get() + " is " + population_data)
 
             self.output_information(data)
+            self.output_file(population_data)
 
         def output_information(self, data):
             """Takes as a parameter data string and outputs that to the gui as a message box"""
             display_pop = Label(user_interface, text=data)
 
-            display_pop.grid(row=self.row_counter, column=0, padx=10, pady=10)
+            display_pop.grid(row=self.row_counter, column=8, padx=10, pady=10)
             self.row_counter+=1
 
 
