@@ -154,7 +154,44 @@ else:
     print("There was a input file specified at runtime")
     print("The contents of the input file are the following:", file_list)
 
+    sliced_list = file_list[1:]
 
+    print(sliced_list)
+
+    year = ""
+    state = ""
+    list_years = []
+    list_states = []
+
+    counter = 0
+
+    for row in sliced_list:
+        year += row[0] + row[1] + row[2] + row[3]
+        list_years.append(year)
+        year=""
+
+        comma = 6
+
+        while comma < len(row) - 1:
+            state += row[comma]
+            comma+=1
+
+        list_states.append(state)
+        state=""
+
+
+
+    print("List of years are the following", list_years)
+    print("List of states are the following", list_states)
+
+
+
+
+    def write_file(list_years, list_states):
+        """Takes a list of years and states and will output the population for those states and their respective years
+        to a file called output.csv"""
+
+        
 
 
 
