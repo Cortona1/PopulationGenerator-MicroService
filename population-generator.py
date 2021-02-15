@@ -8,6 +8,8 @@
 
 import sys
 
+
+
 file_list = []
 f = open(sys.argv[-1], "r")                # open up the file designated at run time
 for line in f:
@@ -20,7 +22,8 @@ print(file_list)
 if file_list[0] != 'input_year,input_state':
 
     from tkinter import *
-    import requests
+    import requests as req
+
     user_interface = Tk()                # create new Tk object for the user interface
 
     user_interface.geometry("1000x800")   # set default window size of interface to 1000 width by 600 height
@@ -115,7 +118,7 @@ if file_list[0] != 'input_year,input_state':
             api_url = "https://api.census.gov/data/" + self.selected_year.get() \
                       + "/acs/acs1?get=NAME,B01001_001E&for=state:*"
 
-            response = requests.get(api_url)
+            response = req.get(api_url)
 
             response.json()
             pop_data = response.json()
@@ -150,7 +153,47 @@ if file_list[0] != 'input_year,input_state':
     user_interface.mainloop()
 
 
-else:
+if file_list[0] == 'input_year,input_state':
+    import urllib.request        # ZERO CLUE WHY REQUEST WONT WORK FOR THIS BUT WILL FOR GUI I HAVE TO USE URLLIB HAFDHASHDFAS
+    import json                  # NEED TO PARSE FOR JSON CONTENT
+
+    def pop_search(year, state):
+        """Takes as a parameter a year and a state and will return the population for that search"""
+
+        api_url = "https://api.census.gov/data/" + year + "/acs/acs1?get=NAME,B01001_001E&for=state:*"
+
+
+        response = urllib.request.urlopen(api_url).read()
+        #print(response)
+
+        data = json.loads(response.decode('utf-8'))
+        #print(data)
+        #pop_data = response.json()
+        #print(data)
+        # print(response.json())
+        population_data = None
+
+        for index in range(1, 53):
+            if data[index][0] == state:
+                population_data = data[index][1]
+                break
+
+        # test = str(self.selected_year.get())
+        return population_data
+
+
+    def write_file(list_years, list_states):
+        """Takes a list of years and states and will output the population for those states and their respective years
+        to a file called output.csv"""
+
+        population_date = []
+
+        for x in range(len(list_states)):
+            pop_results = pop_search(list_years[x], list_states[x])
+            population_date.append(pop_results)
+
+        print(population_date)
+
     print("There was a input file specified at runtime")
     print("The contents of the input file are the following:", file_list)
 
@@ -180,18 +223,9 @@ else:
         state=""
 
 
+    write_file(list_years, list_states)
 
     print("List of years are the following", list_years)
     print("List of states are the following", list_states)
 
-
-
-
-    def write_file(list_years, list_states):
-        """Takes a list of years and states and will output the population for those states and their respective years
-        to a file called output.csv"""
-
-        
-
-
-
+    write_file(list_years, list_states)
