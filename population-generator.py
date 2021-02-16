@@ -1,7 +1,8 @@
 # Author: Anthony Corton
 # Date: 02/11/2021
 # Description: This file contains the gui (graphical user interface O_O) for my python population generator
-#              microservice
+#              microservice. This program will use real data from the census.gov site to retrieve the selected
+#              population of a state for its respective year.
 
 
 
@@ -13,7 +14,7 @@ import sys
 file_list = []
 f = open(sys.argv[-1], "r")                # open up the file designated at run time
 for line in f:
-    file_list.append(line.rstrip())        # add each line entry to the file list
+    file_list.append(line.rstrip())        # append each line of the file to the list till file is read completely
 f.close()
 
 #print(file_list) for debugging purposes
@@ -26,7 +27,7 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import ttk
     user_interface = Tk()                # create new Tk object for the user interface
 
-    user_interface.geometry("1300x800")   # set default window size of interface to 1000 width by 600 height
+    user_interface.geometry("1300x800")   # set default window size of interface to 1300 width by 800 height
     #user_interface.resizable(width=False, height=False)     # lock window ratio
     user_interface.configure(background='#FFFFC1')
 
@@ -39,7 +40,7 @@ if file_list[0] != 'input_year,input_state':
             self.frame = Frame(root)
             self.frame.grid()
             self.selected_year = None
-            self.selected_state = "Toot"
+            self.selected_state = None
             self.row_counter = 12
 
         def display_headers(self):
@@ -133,7 +134,7 @@ if file_list[0] != 'input_year,input_state':
                                           "sfully")
 
             contents.pack(side="top", fill="x", pady=10)
-            x_button = ttk.Button(message, text="Confirm", command=message.destroy)
+            x_button = ttk.Button(message, text="Confirm", command=message.destroy)  # destroy the box when user clicks
             x_button.pack()
             message.mainloop()
 
@@ -149,7 +150,8 @@ if file_list[0] != 'input_year,input_state':
 
             print("You selected the state", self.selected_state.get(), "and the year", self.selected_year.get())
 
-            self.test_api_call()
+            retrieved_data = self.test_api_call()
+            self.output_file(retrieved_data)
             self.pop_up_message()
 
         def test_api_call(self):
@@ -175,7 +177,7 @@ if file_list[0] != 'input_year,input_state':
                   self.selected_year.get() + " is " + population_data)
 
             self.output_information(data)
-            self.output_file(population_data)
+            return population_data
 
         def output_information(self, data):
             """Takes as a parameter data string and outputs that to the gui as a message box"""
