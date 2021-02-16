@@ -10,7 +10,9 @@ design per the canvas update on 2/08 -> "For the Sprint 3, you can rely on ACS a
  must have input formatted like the following:
 
 input_year,input_state
+
 2015,"New York"
+
 2008,"Oregon"
 
 in a file named input.csv
@@ -19,7 +21,9 @@ in a file named input.csv
 Next, the output will be formatted like the following:
 
 input_year,input_state,output_population_size
+
 2015,"New York",19795791
+
 2008,"Oregon",3790060
 
 
@@ -36,9 +40,15 @@ population-generator.py input.csv
 
 
 Imported libraries needed for the program to function:
+
 sys
+
 tkinter
+
 tkk
+
 urllib
+
 json
+
 request
