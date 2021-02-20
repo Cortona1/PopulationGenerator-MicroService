@@ -17,7 +17,6 @@ for line in f:
     file_list.append(line.rstrip())        # append each line of the file to the list till file is read completely
 f.close()
 
-#print(file_list) for debugging purposes
 
 
 if file_list[0] != 'input_year,input_state':
@@ -94,21 +93,60 @@ if file_list[0] != 'input_year,input_state':
             state_list.grid(row=8, column=0, ipadx=10)
             year_list.grid(row=8, column=1)
 
+
+        def read_content_output(self):
+            """Handles creating the button for reading data from the person generator microservice which is
+            formatted as person_output.csv"""
+
+            reference_list = []
+            with open("content_output.csv", "r") as file:
+                for line in file:
+                    reference_list.append(line.strip())
+
+            print(reference_list)
+
+            print("Headers")
+            print(reference_list[0] + "\n")
+
+            for line in range(len(reference_list)):
+                if line!= 0:
+                    print(reference_list[line])
+
+
+
+        def content_button(self):
+            """Creates the button for required to read content outputted by the content generator microservice"""
+
+            content = Button(user_interface, text="Click here to read output from content generator microservice",
+                             command=self.read_content_output)
+
+            space = Label(user_interface)
+            space.grid(row=16,column=0)
+            content.grid(row=17, column=0)
+
         def create_submit(self):
             """Creates the submit button for clicking a search"""
 
-            submit_button = Button(user_interface, text="Click here to submit state and year query",
+            submit = Button(user_interface, text="Click here to submit state and year query",
                                    command=self.submit_search)
 
-            submit_button_output = Button(user_interface, text="Click here to submit state and year query and output results"
+            submit_output = Button(user_interface, text="Click here to submit state and year query and output results"
                                                                " to a csv file named output.csv",
                                    command=self.submit_search_output)
-            another_sapce = Label(user_interface)
+
+            output_pop_csv = Button(user_interface, text="Click here to submit data to pop_out.csv for microservice"
+                                                         " communication", command=self.submit_revised_output)
+
+
+            another_space = Label(user_interface)
             space = Label(user_interface)
+            third_space = Label(user_interface)
             space.grid(row=10, column=0)
-            submit_button.grid(row=11, column=0)
-            another_sapce.grid(row=12,column=0)
-            submit_button_output.grid(row=13, column=0)
+            submit.grid(row=11, column=0)
+            another_space.grid(row=12,column=0)
+            submit_output.grid(row=13, column=0)
+            third_space.grid(row=14, column=0)
+            output_pop_csv.grid(row=15, column=0)
 
         def output_file(self, population_data):
             """Receives as a parameter population data from the test api call function and writes to output.csv that
@@ -123,15 +161,26 @@ if file_list[0] != 'input_year,input_state':
                 file.write(str(population_data))
                 file.write("\n")
 
+        def output_file_communication(self, population_data):
+            """Receives as a parameter population data from the test api call function and writes to output.csv that
+            information in the recognized format specified in the assignment instructions."""
+            with open("pop_out.csv", "w") as file:
+                file.write("input_year,input_state,output_population_size\n")
 
-        def pop_up_message(self):
+                file.write(str(self.selected_year.get()))
+                file.write(',"')
+                file.write(str(self.selected_state.get()))
+                file.write('",')
+                file.write(str(population_data))
+                file.write("\n")
+
+        def pop_up_message(self, text):
             """This function is responsible for showing a pop up message confirming the results of the user's query
             have been successfully written to output.csv"""
 
             message = Tk()
             message.wm_title("Notification!")
-            contents = ttk.Label(message, text="Results have been outputted to output.csv succes"
-                                          "sfully")
+            contents = ttk.Label(message, text=text)
 
             contents.pack(side="top", fill="x", pady=10)
             x_button = ttk.Button(message, text="Confirm", command=message.destroy)  # destroy the box when user clicks
@@ -141,18 +190,26 @@ if file_list[0] != 'input_year,input_state':
         def submit_search(self):
             """Function triggered when user submits a query for state and year"""
 
-            print("You selected the state", self.selected_state.get(), "and the year", self.selected_year.get())
+
 
             self.test_api_call()
 
         def submit_search_output(self):
             """Function triggered when user submits a query for state and year"""
 
-            print("You selected the state", self.selected_state.get(), "and the year", self.selected_year.get())
+
 
             retrieved_data = self.test_api_call()
             self.output_file(retrieved_data)
-            self.pop_up_message()
+            self.pop_up_message("Results have been outputted to output.csv successfully")
+
+        def submit_revised_output(self):
+            """Function triggered when user submits a query for state and year"""
+
+
+            retrieved_data = self.test_api_call()
+            self.output_file_communication(retrieved_data)
+            self.pop_up_message("Results have been outputted to population_out.csv successfully")
 
         def test_api_call(self):
             """This function is for testing api call"""
@@ -164,7 +221,6 @@ if file_list[0] != 'input_year,input_state':
 
             response.json()
             pop_data = response.json()
-            # print(response.json())
             population_data= None
 
             for index in range(1, 53):
@@ -192,6 +248,7 @@ if file_list[0] != 'input_year,input_state':
     test_run.display_headers()
     test_run.display_options()
     test_run.create_submit()
+    test_run.content_button()
     # test_run.test_api_call()
     user_interface.mainloop()
 
@@ -207,13 +264,8 @@ if file_list[0] == 'input_year,input_state':
 
 
         response = urllib.request.urlopen(api_url).read()
-        #print(response)
 
         data = json.loads(response.decode('utf-8'))
-        #print(data)
-        #pop_data = response.json()
-        #print(data)
-        # print(response.json())
         population_data = None
 
         for index in range(1, 53):
@@ -247,14 +299,10 @@ if file_list[0] == 'input_year,input_state':
                 file.write("\n")
 
 
-        #print(population_date)
-
     print("There was a input file specified at runtime")
     print("The contents of the input file are the following:", file_list)
 
     sliced_list = file_list[1:]
-
-    print(sliced_list)
 
     year = ""
     state = ""
