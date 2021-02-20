@@ -134,7 +134,7 @@ if file_list[0] != 'input_year,input_state':
                                                                " to a csv file named output.csv",
                                    command=self.submit_search_output)
 
-            output_pop_csv = Button(user_interface, text="Click here to submit data to pop_out.csv for microservice"
+            output_pop_csv = Button(user_interface, text="Click here to submit data to population_output.csv for microservice"
                                                          " communication", command=self.submit_revised_output)
 
 
@@ -164,7 +164,7 @@ if file_list[0] != 'input_year,input_state':
         def output_file_communication(self, population_data):
             """Receives as a parameter population data from the test api call function and writes to output.csv that
             information in the recognized format specified in the assignment instructions."""
-            with open("pop_out.csv", "w") as file:
+            with open("population_output.csv", "w") as file:
                 file.write("input_year,input_state,output_population_size\n")
 
                 file.write(str(self.selected_year.get()))
@@ -209,7 +209,7 @@ if file_list[0] != 'input_year,input_state':
 
             retrieved_data = self.test_api_call()
             self.output_file_communication(retrieved_data)
-            self.pop_up_message("Results have been outputted to population_out.csv successfully")
+            self.pop_up_message("Results have been outputted to population_output.csv successfully")
 
         def test_api_call(self):
             """This function is for testing api call"""
