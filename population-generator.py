@@ -14,7 +14,7 @@ import sys
 file_list = []
 f = open(sys.argv[-1], "r")                # open up the file designated at run time
 for line in f:
-    file_list.append(line.rstrip())        # append each line of the file to the list till file is read completely
+    file_list.append(line.rstrip())
 f.close()
 
 
@@ -24,7 +24,7 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import *
     import requests as req
     from tkinter import ttk
-    user_interface = Tk()                # create new Tk object for the user interface
+    user_interface = Tk()                
 
     user_interface.geometry("1300x800")   # set default window size of interface to 1300 width by 800 height
     #user_interface.resizable(width=False, height=False)     # lock window ratio
@@ -44,7 +44,7 @@ if file_list[0] != 'input_year,input_state':
             self.frame.grid()
             self.selected_year = None
             self.selected_state = None
-            self.row_counter = 12
+            self.row_counter = 8
 
             self.plain_text = StringVar()
             self.display_output = Label(user_interface, textvariable=self.plain_text)
@@ -109,28 +109,24 @@ if file_list[0] != 'input_year,input_state':
             only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
             file_importance = "content_output.csv"
 
-            while file_importance not in only_files:
-                print("File not found, please click export content_output.csv from content generator microservice"
-                      "search will automatically referesh in 10 seconds till file is found")
+            if file_importance not in only_files:
+                print("File not found, please click check for request from population generator microservice in the"
+                      " content generator microservice")
 
-                sleep(10)  # 10 second delay for refreshing file search
-                only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+            else:
+                reference_list = []
+                with open("content_output.csv", "r") as file:
+                    for line in file:
+                        reference_list.append(line.strip())
 
-            print("Content output was found printing contents")
+                print(reference_list)
 
-            reference_list = []
-            with open("content_output.csv", "r") as file:
-                for line in file:
-                    reference_list.append(line.strip())
+                print("Headers")
+                print(reference_list[0] + "\n")
 
-            print(reference_list)
-
-            print("Headers")
-            print(reference_list[0] + "\n")
-
-            for line in range(len(reference_list)):
-                if line!= 0:
-                    print(reference_list[line])
+                for line in range(len(reference_list)):
+                    if line!= 0:
+                        print(reference_list[line])
 
 
         def check_request(self):
@@ -138,15 +134,13 @@ if file_list[0] != 'input_year,input_state':
             only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
             file_importance = "population_request.csv"
 
-            while file_importance not in only_files:
-                print("File not found, please click to make sure a request for output was sent from"
-                      "the person generator microservice search will automatically referesh"
-                      " in 10 seconds till file is found")
+            if file_importance not in only_files:
+                print("File not found, please make sure a request for input was sent from"
+                      " the person generator microservice as 'population_request.csv' "
+                      " button must be pressed manually to search again")
 
-                sleep(10)  # 10 second delay for refreshing file search
-                only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
-
-            self.output_file_communication()
+            else:
+                self.output_file_communication()
 
         def create_check_button(self):
             """Handles creating the check for request button button"""
@@ -165,6 +159,8 @@ if file_list[0] != 'input_year,input_state':
                 file.write("This is a request for content from population generator microservice to content"
                            "generator microservice")
 
+            self.read_content_output()
+
         def create_request_button(self):
             """Creates the request button for requesting information from the content generator microservice"""
 
@@ -176,16 +172,6 @@ if file_list[0] != 'input_year,input_state':
             space.grid(row=18,column=0)
             request_button.grid(row=19,column=0)
 
-        def content_button(self):
-            """Creates the button for required to read content outputted by the content generator microservice"""
-
-            content = Button(user_interface, text="Click here to read output from content generator microservice",
-                             command=self.read_content_output)
-
-            space = Label(user_interface)
-            space.grid(row=16,column=0)
-            content.grid(row=17, column=0)
-
         def create_submit(self):
             """Creates the submit button for clicking a search"""
 
@@ -196,10 +182,6 @@ if file_list[0] != 'input_year,input_state':
                                                                " to a csv file named output.csv",
                                    command=self.submit_search_output)
 
-            output_pop_csv = Button(user_interface, text="Click here to submit data to population_output.csv for microservice"
-                                                         " communication", command=self.submit_revised_output)
-
-
             another_space = Label(user_interface)
             space = Label(user_interface)
             third_space = Label(user_interface)
@@ -207,8 +189,7 @@ if file_list[0] != 'input_year,input_state':
             submit.grid(row=11, column=0)
             another_space.grid(row=12,column=0)
             submit_output.grid(row=13, column=0)
-            third_space.grid(row=14, column=0)
-            output_pop_csv.grid(row=15, column=0)
+
 
         def output_file(self, population_data):
             """Receives as a parameter population data from the test api call function and writes to output.csv that
@@ -308,7 +289,6 @@ if file_list[0] != 'input_year,input_state':
     test_run.display_headers()
     test_run.display_options()
     test_run.create_submit()
-    test_run.content_button()
     test_run.create_request_button()
     test_run.create_check_button()
     # test_run.test_api_call()
