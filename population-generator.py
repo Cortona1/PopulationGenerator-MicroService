@@ -5,19 +5,13 @@
 #              population of a state for its respective year.
 
 
-
-
 import sys
-
-
 
 file_list = []
 f = open(sys.argv[-1], "r")                # open up the file designated at run time
 for line in f:
     file_list.append(line.rstrip())
 f.close()
-
-
 
 if file_list[0] != 'input_year,input_state':
 
@@ -26,8 +20,7 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import ttk
     user_interface = Tk()
 
-    user_interface.geometry("1300x800")   # set default window size of interface to 1300 width by 800 height
-    #user_interface.resizable(width=False, height=False)     # lock window ratio
+    user_interface.geometry("1400x800")   # set default window size of interface to 1300 width by 800 height
     user_interface.configure(background='#FFFFC1')
 
     from time import sleep
@@ -161,18 +154,18 @@ if file_list[0] != 'input_year,input_state':
                 file.write("This is a request for content from population generator microservice to content"
                            "generator microservice")
 
-            self.read_content_output()
-
         def create_request_button(self):
             """Creates the request button for requesting information from the content generator microservice"""
 
             request_button = Button(user_interface, text="Click here to request input from content generator "
                                                          "microservice", command=self.request_content)
 
+            check_button = Button(user_interface, text="Check for content_output.csv", command=self.read_content_output)
             space = Label(user_interface)
 
             space.grid(row=18,column=0)
             request_button.grid(row=19,column=0)
+            check_button.grid(row=19,column=1)
 
         def create_submit(self):
             """Creates the submit button for clicking a search"""
