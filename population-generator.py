@@ -24,7 +24,7 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import *
     import requests as req
     from tkinter import ttk
-    user_interface = Tk()                
+    user_interface = Tk()
 
     user_interface.geometry("1300x800")   # set default window size of interface to 1300 width by 800 height
     #user_interface.resizable(width=False, height=False)     # lock window ratio
@@ -140,7 +140,9 @@ if file_list[0] != 'input_year,input_state':
                       " button must be pressed manually to search again")
 
             else:
-                self.output_file_communication()
+                self.submit_revised_output()
+                self.pop_up_message("Data has been outputted to population_output.csv, please check the"
+                                    "check for input request in person_generator")
 
         def create_check_button(self):
             """Handles creating the check for request button button"""
@@ -233,14 +235,10 @@ if file_list[0] != 'input_year,input_state':
         def submit_search(self):
             """Function triggered when user submits a query for state and year"""
 
-
-
             self.test_api_call()
 
         def submit_search_output(self):
             """Function triggered when user submits a query for state and year"""
-
-
 
             retrieved_data = self.test_api_call()
             self.output_file(retrieved_data)
