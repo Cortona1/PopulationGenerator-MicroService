@@ -30,6 +30,10 @@ if file_list[0] != 'input_year,input_state':
     #user_interface.resizable(width=False, height=False)     # lock window ratio
     user_interface.configure(background='#FFFFC1')
 
+    from time import sleep
+    import os
+    from os import listdir
+    from os.path import isfile, join
 
     class Gui:
         """Represents the gui class"""
@@ -41,6 +45,10 @@ if file_list[0] != 'input_year,input_state':
             self.selected_year = None
             self.selected_state = None
             self.row_counter = 12
+
+            self.plain_text = StringVar()
+            self.display_output = Label(user_interface, textvariable=self.plain_text)
+            self.display_output.grid(row=self.row_counter, column=8, padx=10, pady=10)
 
         def display_headers(self):
             """Will display the headers of the gui"""
@@ -98,6 +106,18 @@ if file_list[0] != 'input_year,input_state':
             """Handles creating the button for reading data from the person generator microservice which is
             formatted as person_output.csv"""
 
+            only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+            file_importance = "content_output.csv"
+
+            while file_importance not in only_files:
+                print("File not found, please click export content_output.csv from content generator microservice"
+                      "search will automatically referesh in 10 seconds till file is found")
+
+                sleep(10)  # 10 second delay for refreshing file search
+                only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+
+            print("Content output was found printing contents")
+
             reference_list = []
             with open("content_output.csv", "r") as file:
                 for line in file:
@@ -113,6 +133,48 @@ if file_list[0] != 'input_year,input_state':
                     print(reference_list[line])
 
 
+        def check_request(self):
+            """Will check for request from person generator microservice"""
+            only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+            file_importance = "population_request.csv"
+
+            while file_importance not in only_files:
+                print("File not found, please click to make sure a request for output was sent from"
+                      "the person generator microservice search will automatically referesh"
+                      " in 10 seconds till file is found")
+
+                sleep(10)  # 10 second delay for refreshing file search
+                only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+
+            self.output_file_communication()
+
+        def create_check_button(self):
+            """Handles creating the check for request button button"""
+            check_button = Button(user_interface, text="Click here to check for request from person_generator "
+                                                         "microservice", command=self.check_request)
+
+            space = Label(user_interface)
+
+            space.grid(row=20, column=0)
+            check_button.grid(row=21, column=0)
+
+        def request_content(self):
+            """Handles writing the request file"""
+
+            with open("content_request.csv", "w") as file:
+                file.write("This is a request for content from population generator microservice to content"
+                           "generator microservice")
+
+        def create_request_button(self):
+            """Creates the request button for requesting information from the content generator microservice"""
+
+            request_button = Button(user_interface, text="Click here to request input from content generator "
+                                                         "microservice", command=self.request_content)
+
+            space = Label(user_interface)
+
+            space.grid(row=18,column=0)
+            request_button.grid(row=19,column=0)
 
         def content_button(self):
             """Creates the button for required to read content outputted by the content generator microservice"""
@@ -237,10 +299,8 @@ if file_list[0] != 'input_year,input_state':
 
         def output_information(self, data):
             """Takes as a parameter data string and outputs that to the gui as a message box"""
-            display_pop = Label(user_interface, text=data)
 
-            display_pop.grid(row=self.row_counter, column=8, padx=10, pady=10)
-            self.row_counter+=1
+            self.plain_text.set(data)
 
 
     test_run = Gui(user_interface)
@@ -249,8 +309,12 @@ if file_list[0] != 'input_year,input_state':
     test_run.display_options()
     test_run.create_submit()
     test_run.content_button()
+    test_run.create_request_button()
+    test_run.create_check_button()
     # test_run.test_api_call()
+
     user_interface.mainloop()
+
 
 
 if file_list[0] == 'input_year,input_state':
