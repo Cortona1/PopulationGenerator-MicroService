@@ -8,7 +8,7 @@
 import sys
 
 file_list = []
-f = open(sys.argv[-1], "r")                # open up the file designated at run time
+f = open(sys.argv[-1], "r")                     # open up the file designated at run time
 for line in f:
     file_list.append(line.rstrip())
 f.close()
@@ -20,19 +20,18 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import ttk
     user_interface = Tk()
 
-    user_interface.geometry("1400x800")   # set default window size of interface to 1300 width by 800 height
+    user_interface.geometry("1400x800")         # set default window resolution but keep resizing available
     user_interface.configure(background='#FFFFC1')
 
-    from time import sleep
-    import os
     from os import listdir
     from os.path import isfile, join
 
     class Gui:
-        """Represents the gui class"""
+        """Represents the gui class for the population generator microservice"""
 
         def __init__(self, root):
-            """The gui class constructor for initializing the variables it takes as a parameter the root"""
+            """The gui class constructor for initializing the variables it takes as a parameter the root of the
+            Tk object created"""
             self.frame = Frame(root)
             self.frame.grid()
             self.selected_year = None
@@ -55,79 +54,90 @@ if file_list[0] != 'input_year,input_state':
             display_results = Label(user_interface,text="Your results for the search will be shown below:")
 
             display_header.grid(row=0, column=4, ipady=10)
-            #display_header.place(x=600, y=60, anchor="center")
-
             display_creator.grid(row=1, column=4)
             state_header.grid(row=6, column=0, padx=10, pady=30)
             display_results.grid(row=6,column=8)
 
-        def display_options(self):
-            """Will display the options on the gui for selecting state and year"""
+        def create_display_list(self):
+            """Creates the list of options that will be displayed to the gui as a list of available states and
+            years and will return the list"""
 
-            list_var = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
-                        "Florida",
+            state_list = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+                          "Delaware","Florida",
                         "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
                         "Maine",
                         "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
                         "Nebraska",
-                        "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota",
+                        "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+                        "North Dakota",
                         "Ohio",
-                        "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+                        "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+                        "Tennessee",
                         "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
 
-            #  per Sprint 3 Assignment info update "okay to retrieve from just the years that it's available (2005 to 2019) on ACS."
+            #  per Sprint 3 Assignment info update "okay to retrieve from just the years that it's available
+            #  (2005 to 2019) on ACS."
             year_list = [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]
+
+            return [state_list, year_list]
+
+        def display_options(self):
+            """Will display the options on the gui for selecting state and year"""
+            options_list = self.create_display_list()
 
             year_variable = StringVar(user_interface)
             state_variable = StringVar(user_interface)
-            state_variable.set("New Jersey")  # set default menu selection for state to New Jersey
+            state_variable.set("New Jersey")                    # set default menu selection to New Jersey 2005
             year_variable.set(2005)
 
-
-            self.selected_state = state_variable                # assign selected attributed to default ones
+            self.selected_state = state_variable
             self.selected_year = year_variable
 
+            state_menu = OptionMenu(user_interface, state_variable, *options_list[0])
+            year_menu = OptionMenu(user_interface, year_variable, *options_list[1])
 
-            state_list = OptionMenu(user_interface, state_variable, *list_var)
-            year_list = OptionMenu(user_interface, year_variable, *year_list)
-
-            state_list.grid(row=8, column=0, ipadx=10)
-            year_list.grid(row=8, column=1)
-
+            state_menu.grid(row=8, column=0, ipadx=10)
+            year_menu.grid(row=8, column=1)
 
         def read_content_output(self):
-            """Handles creating the button for reading data from the person generator microservice which is
-            formatted as person_output.csv"""
+            """Handles searching for the data from the content generator microservice which is formatted as
+            content_output.csv, will print to console contents if file is found or an error message if not"""
 
-            only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+            directory_files = [file for file in listdir(sys.path[0]) if isfile(join(sys.path[0], file))]
             file_importance = "content_output.csv"
 
-            if file_importance not in only_files:
+            if file_importance not in directory_files:
                 print("File not found, please click check for request from population generator microservice in the"
                       " content generator microservice")
 
             else:
-                reference_list = []
-                with open("content_output.csv", "r") as file:
-                    for line in file:
-                        reference_list.append(line.strip())
+                self.display_content_output()
 
-                print(reference_list)
+        def display_content_output(self):
+            """Handles displaying the contents of content_output.csv to the console via print statements"""
 
-                print("Headers")
-                print(reference_list[0] + "\n")
+            reference_list = []
+            with open("content_output.csv", "r") as file:
+                for entry_list in file:
+                    reference_list.append(entry_list.strip())
 
-                for line in range(len(reference_list)):
-                    if line!= 0:
-                        print(reference_list[line])
+            print(reference_list)
 
+            print("Headers")
+            print(reference_list[0] + "\n")
+
+            for index in range(len(reference_list)):
+                if index != 0:
+                    print(reference_list[index])
 
         def check_request(self):
-            """Will check for request from person generator microservice"""
-            only_files = [f for f in listdir(sys.path[0]) if isfile(join(sys.path[0], f))]
+            """Will check for request from person generator microservice and if there is a request will output data
+            in a file named population_output.csv so that the person generator service can locate and read it"""
+
+            directory_files = [file for file in listdir(sys.path[0]) if isfile(join(sys.path[0], file))]
             file_importance = "population_request.csv"
 
-            if file_importance not in only_files:
+            if file_importance not in directory_files:
                 print("File not found, please make sure a request for input was sent from"
                       " the person generator microservice as 'population_request.csv' "
                       " button must be pressed manually to search again")
@@ -141,14 +151,13 @@ if file_list[0] != 'input_year,input_state':
             """Handles creating the check for request button button"""
             check_button = Button(user_interface, text="Click here to check for request from person_generator "
                                                          "microservice", command=self.check_request)
-
             space = Label(user_interface)
 
             space.grid(row=20, column=0)
             check_button.grid(row=21, column=0)
 
         def request_content(self):
-            """Handles writing the request file"""
+            """Handles writing the request file to the content generator microservice"""
 
             with open("content_request.csv", "w") as file:
                 file.write("This is a request for content from population generator microservice to content"
@@ -168,7 +177,7 @@ if file_list[0] != 'input_year,input_state':
             check_button.grid(row=19,column=1)
 
         def create_submit(self):
-            """Creates the submit button for clicking a search"""
+            """Creates the submit button for clicking a search of state and year"""
 
             submit = Button(user_interface, text="Click here to submit state and year query",
                                    command=self.submit_search)
@@ -179,12 +188,10 @@ if file_list[0] != 'input_year,input_state':
 
             another_space = Label(user_interface)
             space = Label(user_interface)
-            third_space = Label(user_interface)
             space.grid(row=10, column=0)
             submit.grid(row=11, column=0)
             another_space.grid(row=12,column=0)
             submit_output.grid(row=13, column=0)
-
 
         def output_file(self, population_data):
             """Receives as a parameter population data from the test api call function and writes to output.csv that
@@ -240,7 +247,6 @@ if file_list[0] != 'input_year,input_state':
         def submit_revised_output(self):
             """Function triggered when user submits a query for state and year"""
 
-
             retrieved_data = self.test_api_call()
             self.output_file_communication(retrieved_data)
             self.pop_up_message("Results have been outputted to population_output.csv successfully")
@@ -262,7 +268,6 @@ if file_list[0] != 'input_year,input_state':
                     population_data = pop_data[index][1]
                     break
 
-            #test = str(self.selected_year.get())
             data = ("The population for your selected state of " + str(self.selected_state.get()) + " for the year " +
                   self.selected_year.get() + " is " + population_data)
 
@@ -276,27 +281,22 @@ if file_list[0] != 'input_year,input_state':
 
 
     test_run = Gui(user_interface)
-
     test_run.display_headers()
     test_run.display_options()
     test_run.create_submit()
     test_run.create_request_button()
     test_run.create_check_button()
-    # test_run.test_api_call()
-
     user_interface.mainloop()
 
 
-
 if file_list[0] == 'input_year,input_state':
-    import urllib.request        # ZERO CLUE WHY REQUEST WONT WORK FOR THIS BUT WILL FOR GUI I HAVE TO USE URLLIB HAFDHASHDFAS
-    import json                  # NEED TO PARSE FOR JSON CONTENT
+    import urllib.request
+    import json
 
     def pop_search(year, state):
         """Takes as a parameter a year and a state and will return the population for that search"""
 
         api_url = "https://api.census.gov/data/" + year + "/acs/acs1?get=NAME,B01001_001E&for=state:*"
-
 
         response = urllib.request.urlopen(api_url).read()
 
@@ -308,9 +308,7 @@ if file_list[0] == 'input_year,input_state':
                 population_data = data[index][1]
                 break
 
-        # test = str(self.selected_year.get())
         return population_data
-
 
     def write_file(list_years, list_states):
         """Takes a list of years and states and will output the population for those states and their respective years
@@ -359,7 +357,6 @@ if file_list[0] == 'input_year,input_state':
 
         list_states.append(state)
         state=""
-
 
     write_file(list_years, list_states)
 
