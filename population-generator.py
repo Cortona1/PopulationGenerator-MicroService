@@ -20,7 +20,7 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import ttk
     user_interface = Tk()
 
-    user_interface.geometry("1400x800")         # set default window resolution but keep resizing available
+    user_interface.geometry("1400x800")         # keeps resizing window available
     user_interface.configure(background='#FFFFC1')
 
     from os import listdir
@@ -75,8 +75,7 @@ if file_list[0] != 'input_year,input_state':
                         "Tennessee",
                         "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
 
-            #  per Sprint 3 Assignment info update "okay to retrieve from just the years that it's available
-            #  (2005 to 2019) on ACS."
+            #  per Sprint 3 Assignment update "okay to retrieve years 2005 to 2019 on ACS."
             year_list = [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]
 
             return [state_list, year_list]
@@ -319,7 +318,6 @@ if file_list[0] == 'input_year,input_state':
         for x in range(len(list_states)):
             pop_results = pop_search(list_years[x], list_states[x])
             population_date.append(pop_results)
-
 
         with open("output.csv", "w") as file:
             file.write("input_year,input_state,output_population_size\n")
