@@ -18,7 +18,7 @@ input_year,input_state
 in a file named input.csv
 
 
-Next, the output will be formatted like the following:
+Next, the output will be formatted like the following in a csv file named output.csv:
 
 input_year,input_state,output_population_size
 
@@ -67,4 +67,4 @@ Any Folder
 
     -> JessicaD_PersonGen              # holds the person-generator.py microservice
 
-    
+
