@@ -20,11 +20,12 @@ if file_list[0] != 'input_year,input_state':
     from tkinter import ttk
     user_interface = Tk()
 
-    user_interface.geometry("1400x800")         # keeps resizing window available
+    user_interface.geometry("1400x800")         # keep resizing window available
     user_interface.configure(background='#FFFFC1')
 
     from os import listdir
     from os.path import isfile, join
+    import os
 
     class Gui:
         """Represents the gui class for the population generator microservice"""
@@ -158,9 +159,17 @@ if file_list[0] != 'input_year,input_state':
         def request_content(self):
             """Handles writing the request file to the content generator microservice"""
 
+            original_file_path = os.getcwd()
+            path_parent = os.path.dirname(os.getcwd())
+
+            person_gen_path = path_parent + "\DustinF_ContentGenerator"
+            os.chdir(person_gen_path)                               # change current directory
+
             with open("content_request.csv", "w") as file:
                 file.write("This is a request for content from population generator microservice to content"
                            "generator microservice")
+
+            os.chdir(original_file_path)
 
         def create_request_button(self):
             """Creates the request button for requesting information from the content generator microservice"""
@@ -208,15 +217,24 @@ if file_list[0] != 'input_year,input_state':
         def output_file_communication(self, population_data):
             """Receives as a parameter population data from the test api call function and writes to output.csv that
             information in the recognized format specified in the assignment instructions."""
+
+            original_file_path = os.getcwd()                    
+            path_parent = os.path.dirname(os.getcwd())
+
+            person_gen_path = path_parent + "\JessicaD_PersonGen"
+            os.chdir(person_gen_path)
+
             with open("population_output.csv", "w") as file:
                 file.write("input_year,input_state,output_population_size\n")
-
                 file.write(str(self.selected_year.get()))
                 file.write(',"')
                 file.write(str(self.selected_state.get()))
                 file.write('",')
                 file.write(str(population_data))
                 file.write("\n")
+            
+            os.chdir(original_file_path)
+
 
         def pop_up_message(self, text):
             """This function is responsible for showing a pop up message confirming the results of the user's query
@@ -227,7 +245,7 @@ if file_list[0] != 'input_year,input_state':
             contents = ttk.Label(message, text=text)
 
             contents.pack(side="top", fill="x", pady=10)
-            x_button = ttk.Button(message, text="Confirm", command=message.destroy)  # destroy the box when user clicks
+            x_button = ttk.Button(message, text="Confirm", command=message.destroy)
             x_button.pack()
             message.mainloop()
 
@@ -318,6 +336,7 @@ if file_list[0] == 'input_year,input_state':
         for x in range(len(list_states)):
             pop_results = pop_search(list_years[x], list_states[x])
             population_date.append(pop_results)
+
 
         with open("output.csv", "w") as file:
             file.write("input_year,input_state,output_population_size\n")
