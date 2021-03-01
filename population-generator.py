@@ -163,7 +163,7 @@ if file_list[0] != 'input_year,input_state':
             path_parent = os.path.dirname(os.getcwd())
 
             person_gen_path = path_parent + "\DustinF_ContentGenerator"
-            os.chdir(person_gen_path)                               # change current directory
+            os.chdir(person_gen_path)                               
 
             with open("content_request.csv", "w") as file:
                 file.write("This is a request for content from population generator microservice to content"
