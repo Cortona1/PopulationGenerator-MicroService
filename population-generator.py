@@ -163,7 +163,7 @@ if file_list[0] != 'input_year,input_state':
             path_parent = os.path.dirname(os.getcwd())
 
             person_gen_path = path_parent + "\DustinF_ContentGenerator"
-            os.chdir(person_gen_path)                               
+            os.chdir(person_gen_path)
 
             with open("content_request.csv", "w") as file:
                 file.write("This is a request for content from population generator microservice to content"
@@ -234,7 +234,6 @@ if file_list[0] != 'input_year,input_state':
                 file.write("\n")
             
             os.chdir(original_file_path)
-
 
         def pop_up_message(self, text):
             """This function is responsible for showing a pop up message confirming the results of the user's query
@@ -337,7 +336,6 @@ if file_list[0] == 'input_year,input_state':
             pop_results = pop_search(list_years[x], list_states[x])
             population_date.append(pop_results)
 
-
         with open("output.csv", "w") as file:
             file.write("input_year,input_state,output_population_size\n")
             for data in range(len(population_date)):
@@ -364,16 +362,16 @@ if file_list[0] == 'input_year,input_state':
     for row in sliced_list:
         year += row[0] + row[1] + row[2] + row[3]
         list_years.append(year)
-        year=""
+        year = ""
 
         comma = 6
 
         while comma < len(row) - 1:
             state += row[comma]
-            comma+=1
+            comma += 1
 
         list_states.append(state)
-        state=""
+        state = ""
 
     write_file(list_years, list_states)
 
