@@ -53,4 +53,18 @@ json
 
 request
 
-(You will need to install request with pip if not already installed)
+(You will need to install libraries like request with pip if not already installed)
+
+* MicroService communication constraint
+
+The following programs need to be within these folder within the same parent folder for communication to operate
+
+Any Folder
+
+    -> AnthonyC[Pop_Gen_Microservice]  # holds the population-generator.py microservice
+
+    -> DustinF_ContentGenerator        # holds the content-generator.py microservice
+
+    -> JessicaD_PersonGen              # holds the person-generator.py microservice
+
+    
